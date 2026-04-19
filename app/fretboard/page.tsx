@@ -23,8 +23,8 @@ export default async function FretboardPage({
           Fretboard
         </h1>
         <p className="mt-3 max-w-2xl text-stone-600">
-          Every note on a 4-string bass. The red dot is the note you&apos;re
-          centered on.
+          Every note on a 4-string bass. The larger dot marks the root of
+          whatever scale you pick.
         </p>
       </header>
       <FretboardExplorer initialPresetId={preset} />

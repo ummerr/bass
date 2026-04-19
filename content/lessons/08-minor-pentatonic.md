@@ -4,6 +4,7 @@ order: 8
 status: not-started
 summary: Five notes that sound good over almost anything in a minor or blues key.
 techniques: [scales, pentatonic]
+key: A minor
 ---
 
 ## What it is

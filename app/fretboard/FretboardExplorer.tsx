@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { NOTES, type Note, semitoneDistance } from "@/lib/music/notes";
 import {
   SCALE_LABELS,
@@ -8,6 +8,7 @@ import {
   type ScaleName,
 } from "@/lib/music/scales";
 import { intervalName } from "@/lib/music/intervals";
+import { type Key, type KeyMode, keyCssVars } from "@/lib/music/keys";
 import {
   STANDARD_BASS_TUNING,
   DEFAULT_FRET_COUNT,
@@ -89,6 +90,17 @@ function matchPreset(root: Note, scale: ScaleOption): string | null {
   return hit?.id ?? null;
 }
 
+function scaleMode(scale: ScaleOption): KeyMode | null {
+  if (scale === "all") return null;
+  if (scale === "major" || scale === "pentatonic-major") return "major";
+  return "minor";
+}
+
+function currentKey(root: Note, scale: ScaleOption): Key | null {
+  const mode = scaleMode(scale);
+  return mode ? { root, mode } : null;
+}
+
 export default function FretboardExplorer({
   initialPresetId,
 }: {
@@ -102,6 +114,10 @@ export default function FretboardExplorer({
 
   const fretboard = buildFretboard(STANDARD_BASS_TUNING, FRET_COUNT);
   const activePreset = matchPreset(root, scale);
+  const keyCtx = currentKey(root, scale);
+  const keyStyle = keyCtx
+    ? (keyCssVars(keyCtx) as CSSProperties)
+    : undefined;
 
   function noteLabel(note: Note, semis: number): string {
     if (!advanced || labelMode === "note") return note;
@@ -112,7 +128,7 @@ export default function FretboardExplorer({
   }
 
   function dotColor(semis: number, isRoot: boolean): string {
-    if (isRoot) return ROOT_COLOR;
+    if (isRoot) return keyCtx ? "var(--key-accent)" : ROOT_COLOR;
     if (!advanced) return NEUTRAL_NOTE;
     return INTERVAL_COLORS[semis];
   }
@@ -123,7 +139,7 @@ export default function FretboardExplorer({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6" style={keyStyle}>
       <div className="flex flex-col gap-2">
         <span className="text-xs uppercase tracking-wider text-stone-500">
           Show

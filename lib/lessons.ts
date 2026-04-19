@@ -33,6 +33,7 @@ export type LessonMeta = {
   status: LessonStatus;
   summary: string;
   techniques: string[];
+  key?: string;
 };
 
 export type Lesson = LessonMeta & { contentHtml: string };
@@ -56,6 +57,7 @@ function parseLessonMeta(filename: string): LessonMeta {
     status: (data.status ?? "not-started") as LessonStatus,
     summary: String(data.summary ?? ""),
     techniques: Array.isArray(data.techniques) ? data.techniques : [],
+    key: typeof data.key === "string" ? data.key : undefined,
   };
 }
 
@@ -88,6 +90,7 @@ export function getLesson(slug: string): Lesson | null {
     status: (data.status ?? "not-started") as LessonStatus,
     summary: String(data.summary ?? ""),
     techniques: Array.isArray(data.techniques) ? data.techniques : [],
+    key: typeof data.key === "string" ? data.key : undefined,
     contentHtml,
   };
 }

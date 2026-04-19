@@ -4,6 +4,7 @@ order: 7
 status: not-started
 summary: The seven-note template behind most Western music.
 techniques: [scales, theory]
+key: G major
 ---
 
 ## What it is

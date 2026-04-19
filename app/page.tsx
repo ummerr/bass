@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { getAllLessons } from "@/lib/lessons";
 import {
   computeStreak,
@@ -6,6 +7,8 @@ import {
   getHeatmapDays,
   hasEntryToday,
 } from "@/lib/practice";
+import { getAllTabs } from "@/lib/tabs";
+import { safeKeyCssVars } from "@/lib/music/keys";
 import { StatusBadge } from "./lessons/StatusBadge";
 import { Heatmap } from "./_components/Heatmap";
 import { FretboardMinute } from "./_components/FretboardMinute";
@@ -21,6 +24,12 @@ export default function Home() {
   const streak = computeStreak(entries);
   const heatmap = getHeatmapDays(entries, 90);
   const loggedToday = hasEntryToday(entries);
+
+  const tabs = getAllTabs();
+  const funTab = tabs[0] ?? null;
+
+  const skillKeyStyle = safeKeyCssVars(skill?.key) as CSSProperties | undefined;
+  const funKeyStyle = safeKeyCssVars(funTab?.key) as CSSProperties | undefined;
 
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-10 sm:py-14">
@@ -59,6 +68,14 @@ export default function Home() {
                   {skill.order}. {skill.title} →
                 </Link>
                 <StatusBadge status={skill.status} />
+                {skill.key && skillKeyStyle && (
+                  <span
+                    className="rounded-full bg-[var(--key-tint)] px-2 py-0.5 text-[11px] font-medium"
+                    style={{ ...skillKeyStyle, color: "var(--key-accent)" }}
+                  >
+                    in {skill.key}
+                  </span>
+                )}
               </div>
             </>
           ) : (
@@ -73,10 +90,40 @@ export default function Home() {
         </Step>
 
         <Step number={4} duration="5 min" title="Play something fun">
-          <p className="mt-1 text-sm text-stone-600">
-            A song you love — even a single note that matches the bass line.
-            The tab library with loopable sections is on the way.
-          </p>
+          {funTab ? (
+            <>
+              <p className="mt-1 text-sm text-stone-600">
+                Loop a small section of a song until it feels easy. Silent,
+                slow, repeat.
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <Link
+                  href={`/tabs/${funTab.slug}`}
+                  className="inline-flex items-center rounded-md bg-amber-700 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-amber-800"
+                >
+                  Play: {funTab.title} →
+                </Link>
+                {funTab.key && funKeyStyle && (
+                  <span
+                    className="rounded-full bg-[var(--key-tint)] px-2 py-0.5 text-[11px] font-medium"
+                    style={{ ...funKeyStyle, color: "var(--key-accent)" }}
+                  >
+                    {funTab.key}
+                  </span>
+                )}
+                <Link
+                  href="/tabs"
+                  className="text-sm text-stone-500 hover:text-stone-900"
+                >
+                  Browse tabs
+                </Link>
+              </div>
+            </>
+          ) : (
+            <p className="mt-1 text-sm text-stone-600">
+              A song you love — even a single note that matches the bass line.
+            </p>
+          )}
         </Step>
 
         <Step number={5} duration="10 sec" title="Log it">
@@ -132,9 +179,9 @@ export default function Home() {
             blurb="See where every note lives."
           />
           <ExploreCard
+            href="/tabs"
             title="Tab library"
             blurb="Saved tabs with loopable sections."
-            soon
           />
           <ExploreCard
             title="Fundamentals"
