@@ -1,9 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { Tab } from "@/lib/tabs";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { Tab } from "@/lib/tabs/parse";
+import type { BassString } from "@/lib/tabs/schema";
+import {
+  renderGrid,
+  STRINGS_HIGH_TO_LOW,
+  STRINGS_LOW_TO_HIGH,
+  type SectionGrid,
+} from "@/lib/tabs/render-grid";
+import { OrientationLegend } from "./OrientationLegend";
+import { AsciiView } from "./AsciiView";
+import { BeatGrid, type BeatGridSelection } from "./BeatGrid";
+import { FretboardSequence } from "./FretboardSequence";
 
 const DURATION_KEY = "tab-viewer:durationSec";
+const FLIP_KEY = "tab-viewer:flipOrientation";
+
+type ViewMode = "grid" | "ascii" | "fretboard";
 
 function splitBody(lines: string[]): { prose: string; tabStart: number } {
   const firstTab = lines.findIndex((l) => /^\s*[A-Ga-g]\|/.test(l));
@@ -21,27 +35,38 @@ function splitBody(lines: string[]): { prose: string; tabStart: number } {
 export function TabViewer({ tab }: { tab: Tab }) {
   const { prose, tabStart } = splitBody(tab.lines);
   const tabLines = tab.lines.slice(tabStart);
+  const isStructured = Boolean(tab.structured);
+  const sections = useMemo<SectionGrid[] | null>(
+    () => (tab.structured ? renderGrid(tab.structured) : null),
+    [tab.structured],
+  );
   const hasLoops = tab.loops.length > 0;
 
+  const [view, setView] = useState<ViewMode>(isStructured ? "grid" : "ascii");
   const [selectedLoopIndex, setSelectedLoopIndex] = useState<number | null>(
     hasLoops ? 0 : null,
   );
-  const [durationSec, setDurationSecState] = useState(15);
+  const [durationSec, setDurationSec] = useState(15);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [iteration, setIteration] = useState(0);
+  const [flipOrientation, setFlipOrientation] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [selection, setSelection] = useState<BeatGridSelection>(null);
 
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(DURATION_KEY);
-    if (!stored) return;
-    const n = Number(stored);
-    if (Number.isFinite(n) && n >= 5 && n <= 60) {
+    const d = window.localStorage.getItem(DURATION_KEY);
+    if (d) {
+      const n = Number(d);
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDurationSecState(n);
+      if (Number.isFinite(n) && n >= 5 && n <= 60) setDurationSec(n);
     }
+    const f = window.localStorage.getItem(FLIP_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (f === "1") setFlipOrientation(true);
   }, []);
 
   useEffect(() => {
@@ -70,9 +95,37 @@ export function TabViewer({ tab }: { tab: Tab }) {
     };
   }, [isPlaying, durationSec]);
 
+  const activeLoop =
+    selectedLoopIndex !== null && tab.loops[selectedLoopIndex]
+      ? tab.loops[selectedLoopIndex]
+      : null;
+  const activeSectionId = activeLoop?.sectionId ?? null;
+  const activeSection =
+    (sections && activeSectionId
+      ? sections.find((s) => s.sectionId === activeSectionId) ?? null
+      : sections && sections[0]) ?? null;
+  const currentSub =
+    isPlaying && activeSection
+      ? Math.min(
+          activeSection.totalSubs - 1,
+          Math.floor(progress * activeSection.totalSubs),
+        )
+      : null;
+
+  const stringOrder: BassString[] = flipOrientation
+    ? STRINGS_LOW_TO_HIGH
+    : STRINGS_HIGH_TO_LOW;
+
+  const flashIteration = isPlaying && activeLoop ? iteration : 0;
+
   function handleDurationChange(value: number) {
-    setDurationSecState(value);
+    setDurationSec(value);
     window.localStorage.setItem(DURATION_KEY, String(value));
+  }
+
+  function handleFlip(next: boolean) {
+    setFlipOrientation(next);
+    window.localStorage.setItem(FLIP_KEY, next ? "1" : "0");
   }
 
   function resetAll() {
@@ -84,13 +137,11 @@ export function TabViewer({ tab }: { tab: Tab }) {
 
   function changeLoop(value: string) {
     setSelectedLoopIndex(value === "all" ? null : Number(value));
+    setSelection(null);
     resetAll();
   }
 
-  const activeLoop =
-    selectedLoopIndex !== null && tab.loops[selectedLoopIndex]
-      ? tab.loops[selectedLoopIndex]
-      : null;
+  const currentView: ViewMode = isStructured ? view : "ascii";
 
   return (
     <div className="flex flex-col gap-4">
@@ -103,39 +154,59 @@ export function TabViewer({ tab }: { tab: Tab }) {
         />
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-stone-200 bg-stone-900 p-4 font-mono text-[13px] leading-6 text-stone-100">
-        {tabLines.map((line, i) => {
-          const originalIndex = tabStart + i + 1;
-          const inLoop =
-            activeLoop !== null &&
-            originalIndex >= activeLoop.startLine &&
-            originalIndex <= activeLoop.endLine;
-          const outOfLoop = activeLoop !== null && !inLoop;
-          const isFirstOfLoop =
-            activeLoop !== null && originalIndex === activeLoop.startLine;
-          const shouldFlash = isFirstOfLoop && isPlaying && iteration > 0;
-          return (
-            <div
-              key={`line-${originalIndex}`}
-              className={`flex gap-3 ${
-                outOfLoop ? "opacity-30" : "opacity-100"
-              }`}
-            >
-              <span className="w-6 shrink-0 text-right text-stone-500 select-none">
-                {originalIndex}
-              </span>
-              <span
-                key={shouldFlash ? `flash-${iteration}` : "stable"}
-                className={`flex-1 whitespace-pre ${
-                  inLoop ? "bg-amber-500/10" : ""
-                } ${shouldFlash ? "animate-tab-flash" : ""}`}
-              >
-                {line || " "}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+      <OrientationLegend order={stringOrder} flipped={flipOrientation} />
+
+      {isStructured && (
+        <div
+          className="flex flex-wrap gap-1.5"
+          role="tablist"
+          aria-label="Tab view"
+        >
+          <ViewTab active={view === "grid"} onClick={() => setView("grid")}>
+            Beat grid
+          </ViewTab>
+          <ViewTab active={view === "ascii"} onClick={() => setView("ascii")}>
+            ASCII
+          </ViewTab>
+          <ViewTab
+            active={view === "fretboard"}
+            onClick={() => setView("fretboard")}
+          >
+            Fretboard
+          </ViewTab>
+        </div>
+      )}
+
+      {currentView === "grid" && sections && (
+        <BeatGrid
+          sections={sections}
+          stringOrder={stringOrder}
+          activeSectionId={activeSectionId}
+          currentSub={currentSub}
+          selection={selection}
+          onSelect={setSelection}
+          flashIteration={flashIteration}
+        />
+      )}
+      {currentView === "fretboard" && sections && (
+        <FretboardSequence
+          sections={sections}
+          stringOrder={stringOrder}
+          activeSectionId={activeSectionId}
+          currentSub={currentSub}
+          selection={selection}
+          onSelect={setSelection}
+        />
+      )}
+      {currentView === "ascii" && (
+        <AsciiView
+          tabLines={tabLines}
+          tabStart={tabStart}
+          activeLoop={activeLoop}
+          isPlaying={isPlaying}
+          iteration={iteration}
+        />
+      )}
 
       <div className="flex flex-wrap items-center gap-3 rounded-lg border border-stone-200 bg-white p-3">
         {hasLoops && (
@@ -190,11 +261,72 @@ export function TabViewer({ tab }: { tab: Tab }) {
         </label>
       </div>
 
+      {isStructured && (
+        <div className="rounded-lg border border-stone-200 bg-white">
+          <button
+            type="button"
+            onClick={() => setAdvancedOpen((v) => !v)}
+            className="flex w-full items-center justify-between px-4 py-2 text-xs uppercase tracking-wider text-stone-500 hover:text-stone-800"
+            aria-expanded={advancedOpen}
+          >
+            <span>
+              {advancedOpen ? "Hide advanced ↑" : "Show advanced ↓"}
+            </span>
+          </button>
+          {advancedOpen && (
+            <div className="border-t border-stone-200 px-4 py-3">
+              <label className="flex items-start gap-3 text-sm text-stone-700">
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={flipOrientation}
+                  onChange={(e) => handleFlip(e.target.checked)}
+                />
+                <span>
+                  <span className="block">
+                    Flip orientation — show as my bass looks from above
+                  </span>
+                  <span className="mt-1 block text-xs text-stone-500">
+                    Puts E on top (the string closest to your chest).
+                  </span>
+                </span>
+              </label>
+            </div>
+          )}
+        </div>
+      )}
+
       <p className="text-xs text-stone-500">
         Play the phrase silently, along with the timer. When the bar fills and
-        the first line flashes, start the loop again. The goal is to feel the
+        the first beat flashes, start the loop again. The goal is to feel the
         phrase — not to race.
       </p>
     </div>
+  );
+}
+
+function ViewTab({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={
+        active
+          ? "rounded-md border border-stone-900 bg-stone-900 px-3 py-1.5 text-sm text-white transition"
+          : "rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm text-stone-700 transition hover:border-stone-500"
+      }
+    >
+      {children}
+    </button>
   );
 }
