@@ -38,20 +38,20 @@ export function FretboardMinute() {
 
   return (
     <>
-      <p className="mt-1 text-sm text-neutral-600">
-        Today: <strong className="text-neutral-900">{target.label}</strong>.
+      <p className="mt-1 text-sm text-stone-600">
+        Today: <strong className="text-stone-900">{target.label}</strong>.
         Say each note out loud as you play it — open to twelve and back.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Link
           href={drillHref}
-          className="inline-flex items-center rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-neutral-700"
+          className="inline-flex items-center rounded-md bg-amber-700 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-amber-800"
         >
           Start drill →
         </Link>
         <Link
           href="/fretboard"
-          className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-900 transition hover:border-neutral-900"
+          className="inline-flex items-center rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-900 transition hover:border-stone-900"
         >
           Open fretboard
         </Link>

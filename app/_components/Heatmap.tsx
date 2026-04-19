@@ -13,11 +13,11 @@ function levelFor(minutes: number): 0 | 1 | 2 | 3 | 4 {
 }
 
 const LEVEL_FILL: Record<0 | 1 | 2 | 3 | 4, string> = {
-  0: "#f4f4f5",
-  1: "#a7f3d0",
-  2: "#34d399",
-  3: "#059669",
-  4: "#065f46",
+  0: "#f0ead9",
+  1: "#fde68a",
+  2: "#fbbf24",
+  3: "#d97706",
+  4: "#78350f",
 };
 
 export function Heatmap({ days }: { days: HeatmapDay[] }) {
@@ -70,7 +70,7 @@ export function Heatmap({ days }: { days: HeatmapDay[] }) {
               height={CELL}
               rx={2}
               fill={LEVEL_FILL[level]}
-              stroke={d.isToday ? "#0a0a0a" : "none"}
+              stroke={d.isToday ? "#1c1917" : "none"}
               strokeWidth={d.isToday ? 1.5 : 0}
             >
               <title>{title}</title>
@@ -78,7 +78,7 @@ export function Heatmap({ days }: { days: HeatmapDay[] }) {
           );
         })}
       </svg>
-      <div className="flex items-center gap-2 text-[11px] text-neutral-500">
+      <div className="flex items-center gap-2 text-[11px] text-stone-500">
         <span>Less</span>
         {[0, 1, 2, 3, 4].map((l) => (
           <span

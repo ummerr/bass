@@ -40,14 +40,14 @@ export default async function LessonPage({
     <main className="mx-auto w-full max-w-2xl px-6 py-10 sm:py-14">
       <Link
         href="/lessons"
-        className="text-sm text-neutral-500 hover:text-neutral-900"
+        className="text-sm text-stone-500 hover:text-stone-900"
       >
         ← Back to path
       </Link>
 
       <header className="mt-6 mb-8">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs uppercase tracking-wider text-neutral-500">
+          <span className="text-xs uppercase tracking-wider text-stone-500">
             Step {lesson.order}
           </span>
           <StatusBadge status={lesson.status} />
@@ -55,13 +55,13 @@ export default async function LessonPage({
         <h1 className="mt-2 text-3xl font-bold tracking-tight">
           {lesson.title}
         </h1>
-        <p className="mt-2 text-neutral-600">{lesson.summary}</p>
+        <p className="mt-2 text-stone-600">{lesson.summary}</p>
         {lesson.techniques.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {lesson.techniques.map((t) => (
               <span
                 key={t}
-                className="rounded-md bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600"
+                className="rounded-md bg-stone-100 px-2 py-0.5 text-xs text-stone-600"
               >
                 {t}
               </span>
@@ -75,11 +75,11 @@ export default async function LessonPage({
         dangerouslySetInnerHTML={{ __html: lesson.contentHtml }}
       />
 
-      <nav className="mt-12 flex justify-between gap-4 border-t border-neutral-200 pt-6 text-sm">
+      <nav className="mt-12 flex justify-between gap-4 border-t border-stone-200 pt-6 text-sm">
         {prev ? (
           <Link
             href={`/lessons/${prev.slug}`}
-            className="flex flex-col items-start text-neutral-600 hover:text-neutral-900"
+            className="flex flex-col items-start text-stone-600 hover:text-stone-900"
           >
             <span className="text-xs uppercase tracking-wider">
               ← Previous
@@ -92,7 +92,7 @@ export default async function LessonPage({
         {next ? (
           <Link
             href={`/lessons/${next.slug}`}
-            className="flex flex-col items-end text-right text-neutral-600 hover:text-neutral-900"
+            className="flex flex-col items-end text-right text-stone-600 hover:text-stone-900"
           >
             <span className="text-xs uppercase tracking-wider">Next →</span>
             <span className="font-medium">{next.title}</span>

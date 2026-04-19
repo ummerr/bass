@@ -52,13 +52,13 @@ export function LogForm({ currentLesson }: { currentLesson: string | null }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
-        <p className="font-medium text-neutral-900">How this works</p>
-        <ol className="mt-2 list-decimal space-y-1 pl-5 text-neutral-600">
+      <div className="rounded-lg border border-stone-200 bg-amber-50/60 p-4 text-sm text-stone-700">
+        <p className="font-medium text-stone-900">How this works</p>
+        <ol className="mt-2 list-decimal space-y-1 pl-5 text-stone-600">
           <li>Copy the template below.</li>
           <li>
             Paste it into a new file named{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px] text-neutral-800">
+            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px] text-stone-800">
               {filename || "content/practice/YYYY-MM-DD.md"}
             </code>
             .
@@ -69,7 +69,7 @@ export function LogForm({ currentLesson }: { currentLesson: string | null }) {
       </div>
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-xs uppercase tracking-widest text-neutral-500">
+        <span className="text-xs uppercase tracking-widest text-stone-500">
           Template
         </span>
         <textarea
@@ -77,7 +77,7 @@ export function LogForm({ currentLesson }: { currentLesson: string | null }) {
           onChange={(e) => setText(e.target.value)}
           rows={12}
           spellCheck={false}
-          className="w-full rounded-lg border border-neutral-300 bg-white p-3 font-mono text-[13px] leading-relaxed text-neutral-900 focus:border-neutral-900 focus:outline-none"
+          className="w-full rounded-lg border border-stone-300 bg-white p-3 font-mono text-[13px] leading-relaxed text-stone-900 focus:border-stone-900 focus:outline-none"
         />
       </label>
 
@@ -86,11 +86,11 @@ export function LogForm({ currentLesson }: { currentLesson: string | null }) {
           type="button"
           onClick={copy}
           disabled={!text}
-          className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 disabled:opacity-40"
+          className="inline-flex items-center justify-center rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-800 disabled:opacity-40"
         >
           {copied ? "Copied" : "Copy template"}
         </button>
-        <span className="text-xs text-neutral-500">
+        <span className="text-xs text-stone-500">
           Then paste into{" "}
           <code className="font-mono text-[12px]">{filename}</code>
         </span>

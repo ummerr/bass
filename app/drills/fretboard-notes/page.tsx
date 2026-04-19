@@ -24,19 +24,19 @@ export default async function FretboardNotesDrillPage({
     <main className="mx-auto w-full max-w-2xl px-6 py-10 sm:py-14">
       <Link
         href="/"
-        className="text-sm text-neutral-500 hover:text-neutral-900"
+        className="text-sm text-stone-500 hover:text-stone-900"
       >
         ← Home
       </Link>
 
       <header className="mt-6 mb-8">
-        <p className="text-xs uppercase tracking-widest text-neutral-500">
+        <p className="text-xs uppercase tracking-widest text-stone-500">
           Drill
         </p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight">
           Fretboard notes
         </h1>
-        <p className="mt-2 text-neutral-600">
+        <p className="mt-2 text-stone-600">
           Twelve prompts per round, one string at a time. Say the note out
           loud before you tap — the research says speaking the note is what
           moves it into long-term memory.

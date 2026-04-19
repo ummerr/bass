@@ -125,7 +125,7 @@ export default function FretboardExplorer({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <span className="text-xs uppercase tracking-wider text-neutral-500">
+        <span className="text-xs uppercase tracking-wider text-stone-500">
           Show
         </span>
         <div className="flex flex-wrap gap-1.5">
@@ -139,7 +139,7 @@ export default function FretboardExplorer({
             </Pill>
           ))}
           {activePreset === null && (
-            <span className="self-center text-xs text-neutral-500">
+            <span className="self-center text-xs text-stone-500">
               Custom
             </span>
           )}
@@ -150,14 +150,14 @@ export default function FretboardExplorer({
         <button
           type="button"
           onClick={() => setAdvanced((v) => !v)}
-          className="text-xs uppercase tracking-wider text-neutral-500 underline-offset-4 hover:text-neutral-800 hover:underline"
+          className="text-xs uppercase tracking-wider text-stone-500 underline-offset-4 hover:text-stone-800 hover:underline"
         >
           {advanced ? "Hide advanced ↑" : "Show advanced ↓"}
         </button>
       </div>
 
       {advanced && (
-        <div className="flex flex-col gap-5 rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+        <div className="flex flex-col gap-5 rounded-lg border border-stone-200 bg-amber-50/60 p-4">
           <ControlGroup label="Root">
             {NOTES.map((n) => (
               <Pill key={n} active={root === n} onClick={() => setRoot(n)}>
@@ -204,7 +204,7 @@ export default function FretboardExplorer({
             y={PAD_Y - 10}
             width={FRET_W * FRET_COUNT}
             height={STRING_GAP * (STRING_COUNT - 1) + 20}
-            fill="#fafaf9"
+            fill="#fffbeb"
           />
 
           {Array.from({ length: FRET_COUNT + 1 }, (_, i) => {
@@ -262,7 +262,7 @@ export default function FretboardExplorer({
               <text
                 x={8}
                 y={stringY(i) + 4}
-                className="fill-neutral-500"
+                className="fill-stone-500"
                 fontSize={12}
                 fontWeight={600}
               >
@@ -277,7 +277,7 @@ export default function FretboardExplorer({
               x={PAD_L + FRET_W * (f - 0.5)}
               y={HEIGHT + 10}
               textAnchor="middle"
-              className="fill-neutral-400"
+              className="fill-stone-400"
               fontSize={11}
             >
               {f}
@@ -321,7 +321,7 @@ export default function FretboardExplorer({
         </svg>
       </div>
 
-      <p className="text-xs text-neutral-500">
+      <p className="text-xs text-stone-500">
         4-string tuning, top to bottom: G, D, A, E · frets 0–{FRET_COUNT}
       </p>
     </div>
@@ -337,7 +337,7 @@ function ControlGroup({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs uppercase tracking-wider text-neutral-500">
+      <span className="text-xs uppercase tracking-wider text-stone-500">
         {label}
       </span>
       <div className="flex flex-wrap gap-1.5">{children}</div>
@@ -360,8 +360,8 @@ function Pill({
       onClick={onClick}
       className={
         active
-          ? "rounded-md border border-neutral-900 bg-neutral-900 px-3 py-1.5 text-sm text-white transition"
-          : "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm text-neutral-700 transition hover:border-neutral-500"
+          ? "rounded-md border border-stone-900 bg-stone-900 px-3 py-1.5 text-sm text-white transition"
+          : "rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm text-stone-700 transition hover:border-stone-500"
       }
     >
       {children}

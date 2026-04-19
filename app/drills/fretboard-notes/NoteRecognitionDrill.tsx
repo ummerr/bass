@@ -187,14 +187,14 @@ function Prompt({
 }) {
   if (prompt.kind === "name-to-fret") {
     return (
-      <div className="flex flex-col items-center gap-2 rounded-xl border border-neutral-200 bg-white p-6 text-center">
-        <p className="text-xs uppercase tracking-widest text-neutral-500">
+      <div className="flex flex-col items-center gap-2 rounded-xl border border-stone-200 bg-white p-6 text-center">
+        <p className="text-xs uppercase tracking-widest text-stone-500">
           Find this note on the {openNote} string
         </p>
-        <p className="text-5xl font-bold tracking-tight text-neutral-900">
+        <p className="text-5xl font-bold tracking-tight text-stone-900">
           {prompt.target}
         </p>
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-stone-500">
           Say it out loud. Then tap the fret.
         </p>
         {feedback.kind === "correct" && (
@@ -209,11 +209,11 @@ function Prompt({
     );
   }
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-neutral-200 bg-white p-6 text-center">
-      <p className="text-xs uppercase tracking-widest text-neutral-500">
+    <div className="flex flex-col items-center gap-2 rounded-xl border border-stone-200 bg-white p-6 text-center">
+      <p className="text-xs uppercase tracking-widest text-stone-500">
         Name the highlighted fret on the {openNote} string
       </p>
-      <p className="mt-1 text-sm text-neutral-500">
+      <p className="mt-1 text-sm text-stone-500">
         Say it out loud. Then pick the note.
       </p>
       {feedback.kind === "correct" && (
@@ -248,7 +248,7 @@ function SingleString({
       width={width}
       height={h}
       viewBox={`0 0 ${width} ${h}`}
-      className="max-w-full rounded-lg border border-neutral-200 bg-white"
+      className="max-w-full rounded-lg border border-stone-200 bg-white"
       role="img"
       aria-label={`${openNote} string, 0 to ${FRETS} frets`}
     >
@@ -295,7 +295,7 @@ function SingleString({
               strokeWidth={isHighlighted ? 2 : 0}
               className={
                 onPick && !disabled
-                  ? "cursor-pointer hover:fill-neutral-100"
+                  ? "cursor-pointer hover:fill-stone-100"
                   : undefined
               }
               onClick={onPick && !disabled ? () => onPick(f) : undefined}
@@ -339,7 +339,7 @@ function NoteButtons({
             className={`rounded-md border px-2 py-2 text-sm font-medium transition ${
               isCorrect
                 ? "border-emerald-500 bg-emerald-50 text-emerald-800"
-                : "border-neutral-300 bg-white text-neutral-900 hover:border-neutral-900 disabled:opacity-50"
+                : "border-stone-300 bg-white text-stone-900 hover:border-stone-900 disabled:opacity-50"
             }`}
           >
             {n}
@@ -361,10 +361,10 @@ function Progress({
 }) {
   const pct = (index / total) * 100;
   return (
-    <div className="flex items-center gap-3 text-xs text-neutral-500">
-      <div className="h-1.5 flex-1 rounded-full bg-neutral-200">
+    <div className="flex items-center gap-3 text-xs text-stone-500">
+      <div className="h-1.5 flex-1 rounded-full bg-stone-200">
         <div
-          className="h-full rounded-full bg-neutral-900 transition-[width]"
+          className="h-full rounded-full bg-stone-900 transition-[width]"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -389,28 +389,28 @@ function ResultCard({
   const seconds = Math.round(elapsedMs / 1000);
   const pct = Math.round((correct / total) * 100);
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border border-neutral-200 bg-white p-8 text-center">
-      <p className="text-xs uppercase tracking-widest text-neutral-500">
+    <div className="flex flex-col items-center gap-3 rounded-xl border border-stone-200 bg-white p-8 text-center">
+      <p className="text-xs uppercase tracking-widest text-stone-500">
         Done
       </p>
       <p className="text-5xl font-bold tracking-tight">
         {correct}
-        <span className="text-2xl text-neutral-400">/{total}</span>
+        <span className="text-2xl text-stone-400">/{total}</span>
       </p>
-      <p className="text-sm text-neutral-600">
+      <p className="text-sm text-stone-600">
         {pct}% · {seconds} seconds
       </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <button
           type="button"
           onClick={onAgain}
-          className="inline-flex items-center rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
+          className="inline-flex items-center rounded-md bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800"
         >
           Again
         </button>
         <Link
           href="/"
-          className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-900 hover:border-neutral-900"
+          className="inline-flex items-center rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-900 hover:border-stone-900"
         >
           Home
         </Link>
@@ -429,9 +429,9 @@ function ConfigBar({
   disabled?: boolean;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+    <div className="flex flex-wrap items-center gap-4 rounded-lg border border-stone-200 bg-amber-50/60 p-3">
       <fieldset className="flex items-center gap-2">
-        <legend className="mr-1 text-xs uppercase tracking-wider text-neutral-500">
+        <legend className="mr-1 text-xs uppercase tracking-wider text-stone-500">
           String
         </legend>
         {STRING_OPTIONS.map((s) => (
@@ -442,8 +442,8 @@ function ConfigBar({
             onClick={() => onChange({ ...config, string: s.name })}
             className={`rounded-md px-2.5 py-1 text-sm font-medium transition ${
               config.string === s.name
-                ? "bg-neutral-900 text-white"
-                : "bg-white text-neutral-700 hover:bg-neutral-100 disabled:opacity-50"
+                ? "bg-stone-900 text-white"
+                : "bg-white text-stone-700 hover:bg-stone-100 disabled:opacity-50"
             }`}
           >
             {s.name}
@@ -451,7 +451,7 @@ function ConfigBar({
         ))}
       </fieldset>
       <fieldset className="flex items-center gap-2">
-        <legend className="mr-1 text-xs uppercase tracking-wider text-neutral-500">
+        <legend className="mr-1 text-xs uppercase tracking-wider text-stone-500">
           Mode
         </legend>
         {(
@@ -467,8 +467,8 @@ function ConfigBar({
             onClick={() => onChange({ ...config, mode: m.v })}
             className={`rounded-md px-2.5 py-1 text-sm font-medium transition ${
               config.mode === m.v
-                ? "bg-neutral-900 text-white"
-                : "bg-white text-neutral-700 hover:bg-neutral-100 disabled:opacity-50"
+                ? "bg-stone-900 text-white"
+                : "bg-white text-stone-700 hover:bg-stone-100 disabled:opacity-50"
             }`}
           >
             {m.label}

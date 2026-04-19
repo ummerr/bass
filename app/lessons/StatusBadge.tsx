@@ -1,7 +1,7 @@
 import { type LessonStatus, STATUS_LABELS } from "@/lib/lessons";
 
 const STATUS_CLASSES: Record<LessonStatus, string> = {
-  "not-started": "bg-neutral-100 text-neutral-600 border-neutral-200",
+  "not-started": "bg-stone-100 text-stone-600 border-stone-200",
   learning: "bg-amber-50 text-amber-800 border-amber-200",
   practicing: "bg-sky-50 text-sky-800 border-sky-200",
   comfortable: "bg-emerald-50 text-emerald-800 border-emerald-200",
