@@ -3,8 +3,10 @@ import path from "node:path";
 import matter from "gray-matter";
 import { z } from "zod";
 import {
+  CategorySchema,
   StructuredTabSchema,
   type StructuredTab,
+  type TabCategory,
   type TabProvenance,
 } from "./schema";
 import { renderAscii } from "./render-ascii";
@@ -27,6 +29,8 @@ export type TabMeta = {
   techniques: string[];
   loops: TabLoop[];
   tuning?: string;
+  category?: TabCategory;
+  startHere: boolean;
 };
 
 export type Tab = TabMeta & {
@@ -119,6 +123,8 @@ function parseStructured(
     techniques: structured.techniques,
     loops,
     tuning: structured.tuning,
+    category: structured.category,
+    startHere: structured.startHere,
   };
   const body = outLines.join("\n");
   return {
@@ -139,6 +145,7 @@ function parseLegacy(
 ): Parsed {
   const body = trimBlank(rawBody);
   const slug = slugFromFilename(filename);
+  const categoryParsed = CategorySchema.safeParse(data.category);
   const meta: TabMeta = {
     slug,
     order: orderFromFilename(filename),
@@ -151,6 +158,8 @@ function parseLegacy(
       ? (data.techniques as string[])
       : [],
     loops: parseLegacyLoops(data.loops),
+    category: categoryParsed.success ? categoryParsed.data : undefined,
+    startHere: data.startHere === true,
   };
   return {
     tab: { ...meta, body, lines: body.split("\n") },
@@ -185,6 +194,8 @@ export function getAllTabs(): TabMeta[] {
       techniques: p.tab.techniques,
       loops: p.tab.loops,
       tuning: p.tab.tuning,
+      category: p.tab.category,
+      startHere: p.tab.startHere,
     }))
     .sort((a, b) => {
       if (a.difficulty !== b.difficulty) return a.difficulty - b.difficulty;

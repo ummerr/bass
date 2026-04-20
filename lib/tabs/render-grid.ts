@@ -75,8 +75,9 @@ export function renderSectionGrid(section: TabSection): SectionGrid {
   const staged: StagedNote[] = [];
   for (const note of section.bars) {
     const bar = note.bar ?? 1;
+    const sub = note.sub ?? 0;
     const startSub =
-      (bar - 1) * SUBS_PER_BAR + (note.beat - 1) * SUBS_PER_BEAT;
+      (bar - 1) * SUBS_PER_BAR + (note.beat - 1) * SUBS_PER_BEAT + sub;
     const rawSpan = Math.max(1, subFromDur(note.dur));
     const span = Math.min(rawSpan, totalSubs - startSub);
     if (span <= 0) continue;

@@ -8,7 +8,9 @@ export type {
   TabProvenance,
   BassString,
   Duration,
+  TabCategory,
 } from "./schema";
+export { CATEGORIES, CATEGORY_LABELS } from "./schema";
 export {
   renderGrid,
   renderSectionGrid,

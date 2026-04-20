@@ -26,7 +26,8 @@ export default function Home() {
   const loggedToday = hasEntryToday(entries);
 
   const tabs = getAllTabs();
-  const funTab = tabs[0] ?? null;
+  const starters = tabs.filter((t) => t.startHere);
+  const funTab = starters[0] ?? tabs[0] ?? null;
 
   const skillKeyStyle = safeKeyCssVars(skill?.key) as CSSProperties | undefined;
 

@@ -5,6 +5,8 @@ key: E minor
 tempo: 120
 difficulty: 1
 techniques: [fingerstyle]
+category: alt
+startHere: true
 loops:
   - { name: "Intro riff", startLine: 3, endLine: 6 }
 ---

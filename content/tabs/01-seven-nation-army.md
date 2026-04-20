@@ -6,6 +6,8 @@ key: E minor
 tempo: 124
 difficulty: 1
 techniques: [fingerstyle, root-octave]
+category: rock
+startHere: true
 sections:
   - id: main-riff
     name: Main riff

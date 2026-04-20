@@ -5,6 +5,7 @@ key: E minor
 tempo: 0
 difficulty: 3
 techniques: [fingerstyle, slides, ghost-notes, string-crossing]
+category: alt
 loops:
   - { name: "Warm-up — open E alternation",      startLine: 3,  endLine: 6  }
   - { name: "Warm-up — slide drill",              startLine: 8,  endLine: 11 }

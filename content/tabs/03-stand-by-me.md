@@ -5,6 +5,7 @@ key: A major
 tempo: 118
 difficulty: 1
 techniques: [fingerstyle, root-5]
+category: pop
 loops:
   - { name: "Verse loop", startLine: 3, endLine: 6 }
 ---

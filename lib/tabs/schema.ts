@@ -22,11 +22,13 @@ export const DurationSchema = z.enum([
 ]);
 
 export const BeatSchema = z.number().int().min(1).max(4);
+export const SubBeatSchema = z.number().int().min(0).max(3);
 
 export const NoteSchema = z
   .object({
     bar: z.number().int().positive().default(1),
     beat: BeatSchema,
+    sub: SubBeatSchema.default(0),
     dur: DurationSchema,
     string: BassStringSchema.optional(),
     fret: FretSchema.optional(),
@@ -64,6 +66,16 @@ export const ProvenanceSchema = z.object({
   ummerr_verified: z.string().optional(),
 });
 
+export const CategorySchema = z.enum([
+  "rock",
+  "alt",
+  "pop",
+  "funk",
+  "reggae",
+  "blues",
+  "prog",
+]);
+
 export const StructuredTabSchema = z
   .object({
     title: z.string().min(1),
@@ -73,6 +85,8 @@ export const StructuredTabSchema = z
     tempo: z.number().nonnegative().default(0),
     difficulty: z.number().int().min(1).max(5).default(1),
     techniques: z.array(z.string()).default([]),
+    category: CategorySchema.optional(),
+    startHere: z.boolean().default(false),
     sections: z.array(SectionSchema).min(1),
     loops: z.array(LoopRefSchema).default([]),
     provenance: ProvenanceSchema.optional(),
@@ -97,3 +111,24 @@ export type TabLoopRef = z.infer<typeof LoopRefSchema>;
 export type TabProvenance = z.infer<typeof ProvenanceSchema>;
 export type BassString = z.infer<typeof BassStringSchema>;
 export type Duration = z.infer<typeof DurationSchema>;
+export type TabCategory = z.infer<typeof CategorySchema>;
+
+export const CATEGORIES: readonly TabCategory[] = [
+  "rock",
+  "alt",
+  "pop",
+  "funk",
+  "reggae",
+  "blues",
+  "prog",
+] as const;
+
+export const CATEGORY_LABELS: Record<TabCategory, string> = {
+  rock: "Rock",
+  alt: "Alt / Punk",
+  pop: "Pop",
+  funk: "Funk & Soul",
+  reggae: "Reggae",
+  blues: "Blues",
+  prog: "Progressive",
+};
