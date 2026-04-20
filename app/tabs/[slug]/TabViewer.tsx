@@ -32,7 +32,19 @@ function splitBody(lines: string[]): { prose: string; tabStart: number } {
   return { prose: proseLines.join("\n").trim(), tabStart: firstTab };
 }
 
-export function TabViewer({ tab }: { tab: Tab }) {
+export type TabViewerProps = {
+  tab: Tab;
+  initialLoopName?: string;
+  initialDurationSec?: number;
+  forcedView?: ViewMode;
+};
+
+export function TabViewer({
+  tab,
+  initialLoopName,
+  initialDurationSec,
+  forcedView,
+}: TabViewerProps) {
   const { prose, tabStart } = splitBody(tab.lines);
   const tabLines = tab.lines.slice(tabStart);
   const isStructured = Boolean(tab.structured);
@@ -42,11 +54,17 @@ export function TabViewer({ tab }: { tab: Tab }) {
   );
   const hasLoops = tab.loops.length > 0;
 
+  function resolveLoopIndex(name: string | undefined): number | null {
+    if (!name || !hasLoops) return null;
+    const i = tab.loops.findIndex((l) => l.name === name);
+    return i >= 0 ? i : null;
+  }
+
   const [view, setView] = useState<ViewMode>(isStructured ? "grid" : "ascii");
   const [selectedLoopIndex, setSelectedLoopIndex] = useState<number | null>(
-    hasLoops ? 0 : null,
+    () => resolveLoopIndex(initialLoopName) ?? (hasLoops ? 0 : null),
   );
-  const [durationSec, setDurationSec] = useState(15);
+  const [durationSec, setDurationSec] = useState(initialDurationSec ?? 15);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [iteration, setIteration] = useState(0);
@@ -57,17 +75,42 @@ export function TabViewer({ tab }: { tab: Tab }) {
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
 
+  // When initialDurationSec is set (e.g. the /learn page drives per-step pacing),
+  // skip localStorage entirely for this instance so we don't clobber the user's
+  // preferred default on /tabs/[slug] pages.
+  const durationControlled = initialDurationSec !== undefined;
+
   useEffect(() => {
-    const d = window.localStorage.getItem(DURATION_KEY);
-    if (d) {
-      const n = Number(d);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (Number.isFinite(n) && n >= 5 && n <= 60) setDurationSec(n);
+    if (!durationControlled) {
+      const d = window.localStorage.getItem(DURATION_KEY);
+      if (d) {
+        const n = Number(d);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (Number.isFinite(n) && n >= 5 && n <= 60) setDurationSec(n);
+      }
     }
     const f = window.localStorage.getItem(FLIP_KEY);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (f === "1") setFlipOrientation(true);
-  }, []);
+  }, [durationControlled]);
+
+  // Sync prop changes from parent (e.g. /learn page "Load this drill" buttons).
+  /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
+  useEffect(() => {
+    if (initialLoopName === undefined) return;
+    const next = resolveLoopIndex(initialLoopName);
+    setSelectedLoopIndex(next);
+    setSelection(null);
+    setIsPlaying(false);
+    setProgress(0);
+    setIteration(0);
+    startRef.current = null;
+  }, [initialLoopName]);
+
+  useEffect(() => {
+    if (initialDurationSec === undefined) return;
+    setDurationSec(initialDurationSec);
+  }, [initialDurationSec]);
+  /* eslint-enable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 
   useEffect(() => {
     if (!isPlaying) {
@@ -120,7 +163,9 @@ export function TabViewer({ tab }: { tab: Tab }) {
 
   function handleDurationChange(value: number) {
     setDurationSec(value);
-    window.localStorage.setItem(DURATION_KEY, String(value));
+    if (!durationControlled) {
+      window.localStorage.setItem(DURATION_KEY, String(value));
+    }
   }
 
   function handleFlip(next: boolean) {
@@ -141,7 +186,9 @@ export function TabViewer({ tab }: { tab: Tab }) {
     resetAll();
   }
 
-  const currentView: ViewMode = isStructured ? view : "ascii";
+  const effectiveView: ViewMode = forcedView ?? view;
+  const currentView: ViewMode = isStructured ? effectiveView : "ascii";
+  const showViewTabs = isStructured && forcedView === undefined;
 
   return (
     <div className="flex flex-col gap-4">
@@ -156,7 +203,7 @@ export function TabViewer({ tab }: { tab: Tab }) {
 
       <OrientationLegend order={stringOrder} flipped={flipOrientation} />
 
-      {isStructured && (
+      {showViewTabs && (
         <div
           className="flex flex-wrap gap-1.5"
           role="tablist"

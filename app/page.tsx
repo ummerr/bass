@@ -29,7 +29,6 @@ export default function Home() {
   const funTab = tabs[0] ?? null;
 
   const skillKeyStyle = safeKeyCssVars(skill?.key) as CSSProperties | undefined;
-  const funKeyStyle = safeKeyCssVars(funTab?.key) as CSSProperties | undefined;
 
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-10 sm:py-14">
@@ -90,40 +89,32 @@ export default function Home() {
         </Step>
 
         <Step number={4} duration="5 min" title="Play something fun">
-          {funTab ? (
-            <>
-              <p className="mt-1 text-sm text-stone-600">
-                Loop a small section of a song until it feels easy. Silent,
-                slow, repeat.
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <Link
-                  href={`/tabs/${funTab.slug}`}
-                  className="inline-flex items-center rounded-md bg-amber-700 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-amber-800"
-                >
-                  Play: {funTab.title} →
-                </Link>
-                {funTab.key && funKeyStyle && (
-                  <span
-                    className="rounded-full bg-[var(--key-tint)] px-2 py-0.5 text-[11px] font-medium"
-                    style={{ ...funKeyStyle, color: "var(--key-accent)" }}
-                  >
-                    {funTab.key}
-                  </span>
-                )}
-                <Link
-                  href="/tabs"
-                  className="text-sm text-stone-500 hover:text-stone-900"
-                >
-                  Browse tabs
-                </Link>
-              </div>
-            </>
-          ) : (
-            <p className="mt-1 text-sm text-stone-600">
-              A song you love — even a single note that matches the bass line.
-            </p>
-          )}
+          <p className="mt-1 text-sm text-stone-600">
+            New: a guided breakdown of the Fabienk main riff — three warm-ups,
+            four chunks, silent loops. Great for a fresh bass.
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <Link
+              href="/learn/fabienk"
+              className="inline-flex items-center rounded-md bg-amber-700 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-amber-800"
+            >
+              Learn: Fabienk →
+            </Link>
+            {funTab && (
+              <Link
+                href={`/tabs/${funTab.slug}`}
+                className="text-sm text-stone-500 hover:text-stone-900"
+              >
+                Or loop: {funTab.title}
+              </Link>
+            )}
+            <Link
+              href="/tabs"
+              className="text-sm text-stone-500 hover:text-stone-900"
+            >
+              Browse tabs
+            </Link>
+          </div>
         </Step>
 
         <Step number={5} duration="10 sec" title="Log it">
